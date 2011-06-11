@@ -1,0 +1,53 @@
+# "boards.txt" for BlinkMuino - Arduino on BlinkM boards
+# 2011 - Tod E. Kurt - http://todbot.com/blog/ - http://thingm.com/
+#
+# note: "upload.using" takes "hardwarename:programmername" argument
+#
+
+blinkm85.name=BlinkM/MinM ATtiny85 w/ ArduinoISP
+blinkm85.upload.using=arduino:arduinoisp
+blinkm85.upload.maximum_size=8192
+blinkm85.build.mcu=attiny85
+blinkm85.build.f_cpu=8000000L
+blinkm85.build.core=blinkm
+blinkm85.upload.disable_flushing=true
+
+blinkm45.name=BlinkM ATtiny45 w/ ArduinoISP
+blinkm45.upload.using=arduino:arduinoisp
+blinkm45.upload.maximum_size=4096
+blinkm45.build.mcu=attiny45
+blinkm45.build.f_cpu=8000000L
+blinkm45.build.core=blinkm
+
+#
+
+blinkm85isp.name=BlinkM/MinM ATtiny85 w/ AVRISPmkII
+blinkm85isp.upload.using=blinkm:avrispmkii
+blinkm85isp.upload.maximum_size=8192
+blinkm85isp.build.mcu=attiny85
+blinkm85isp.build.f_cpu=8000000L
+blinkm85isp.build.core=blinkm
+
+blinkm45isp.name=BlinkM ATtiny45 w/ AVRISPmkII
+blinkm45isp.upload.using=blinkm:avrispmkii
+blinkm45isp.upload.maximum_size=4096
+blinkm45isp.build.mcu=attiny45
+blinkm45isp.build.f_cpu=8000000L
+blinkm45isp.build.core=blinkm
+
+#
+
+blinkm85usbtiny.name=BlinkM/MinM ATtiny85 w/ USBtinyISP
+blinkm85usbtiny.upload.using=blinkm:usbtiny
+blinkm85usbtiny.upload.maximum_size=8192
+blinkm85usbtiny.build.mcu=attiny85
+blinkm85usbtiny.build.f_cpu=8000000L
+blinkm85usbtiny.build.core=blinkm
+
+blinkm45usbtiny.name=BlinkM ATtiny45 w/ USBtinyISP
+blinkm45usbtiny.upload.using=blinkm:usbtiny
+blinkm45usbtiny.upload.maximum_size=4096
+blinkm45usbtiny.build.mcu=attiny45
+blinkm45usbtiny.build.f_cpu=8000000L
+blinkm45usbtiny.build.core=blinkm
+

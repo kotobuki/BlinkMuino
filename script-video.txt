@@ -1,0 +1,52 @@
+BlinkMuino Video Script Notes
+-----------------------------
+2011 - Tod E. Kurt - http://todbot.com/blog - http://thingm.com/
+
+- Did you know you can run Arduino sketches on a BlinkM Smart LED?
+
+- Here's an Arduino.  We won't need that.
+
+- A BlinkM is: an RGB LED with a tiny computer on the back.  
+It can be any color and can run its own light sequences.
+
+- Here is a BlinkM MinM, works just like a BlinkM but is much smaller.
+
+- With an add-on to the Arduino IDE software, and an AVR programmer,
+you can start reprogramming your BlinkMs in no time.  AVR programmers can cost under $10.  This one costs about $30.
+
+- Now the AVR chip in BlinkM doesn't have nearly the I/O of a regular Arduino.  -- You are limited to a total of 5 I/O pins.  
+-- Two of those can have hardware PWM output.
+-- One can be an analog input.
+-- If you modify the BlinkM board and remove the LED, you can get more inputs.
+
+- One of the easiest ways to wire up a BlinkM for reprogramming is with 
+an adapter cable like this one already made.  
+
+- [[ show diagram ]] Here is a diagram of how to wire it up. 
+A higher-rez version will be posted online.
+
+...
+
+- With the BlinkM plugged in and ready to go, download the Arduino software
+add-on available here [...] and install it.
+
+- [[ show screen capture ]]
+Now load up one of the example sketches, like this one that blinks each of
+the BlinkM's LEDs one after the other.  Select the type of BlinkM you have,
+in this case, it's an older one with an ATtiny45.  Then press "Upload".
+
+- The blue LED on the BlinkM will flash when it is being programmed.
+And when it stopped flashing, your sketch starts running.  
+
+- It runs stand-alone, no computer or Arduino board required, just power.
+
+- A more complex example is this one here.  It's a knob-controlled servo
+
+- Here's the diagram for it. [[ show diagram ]]
+
+- Now if you want to go back to the original BlinkM firmware, you can use the
+ReflashBlinkM app to get normal operation of your BlinkM back or update it to 
+the latest official firmware.
+[[ show screencast ]]
+
+

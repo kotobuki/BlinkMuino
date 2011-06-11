@@ -1,0 +1,15 @@
+# "programmers.txt" for BlinkMuino - Arduino on BlinkM boards
+# 2011 - Tod E. Kurt - http://todbot.com/blog/ - http://thingm.com/
+#
+# note: "upload.using" takes "hardwarename:programmername" argument
+#
+
+avrispmkii.name=AVRISP mkII
+avrispmkii.communication=usb
+avrispmkii.protocol=stk500v2
+
+usbtiny.name=USBtinyISP
+usbtiny.protocol=usbtiny
+
+
+ 
