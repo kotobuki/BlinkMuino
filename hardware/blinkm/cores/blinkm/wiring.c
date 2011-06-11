@@ -182,25 +182,25 @@ volatile byte compbuff[CHMAX];
 
 SIGNAL(TIM1_OVF_vect)
 {
-  static byte pinlevelB = PORTB_MASK;
-  static byte softcount = 0xFF;
+	static byte pinlevelB = PORTB_MASK;
+	static byte softcount = 0xFF;
 
-  // common anode (+5V) means negative (~) logic
-  PORTB = ~pinlevelB;            // update outputs
+	// common anode (+5V) means negative (~) logic
+	PORTB = ~pinlevelB;						 // update outputs
 
-  if (++softcount == 0) {         // increment modulo 256 counter and update
-    // the compare values only when counter = 0.
-    compare[0] = compbuff[0];   // verbose code for speed
-    compare[1] = compbuff[1];
-    compare[2] = compbuff[2];
+	if (++softcount == 0) {					// increment modulo 256 counter and update
+		// the compare values only when counter = 0.
+		compare[0] = compbuff[0];		// verbose code for speed
+		compare[1] = compbuff[1];
+		compare[2] = compbuff[2];
 
-    pinlevelB = PORTB_MASK;     // set all port pins high
-  }
+		pinlevelB = PORTB_MASK;			// set all port pins high
+	}
 
-  // clear port pin on compare match (executed on next interrupt)
-  if (compare[0] == softcount) CH0_CLEAR;
-  if (compare[1] == softcount) CH1_CLEAR;
-  if (compare[2] == softcount) CH2_CLEAR;
+	// clear port pin on compare match (executed on next interrupt)
+	if (compare[0] < 255 && compare[0] == softcount) CH0_CLEAR;
+	if (compare[1] < 255 && compare[1] == softcount) CH1_CLEAR;
+	if (compare[2] < 255 && compare[2] == softcount) CH2_CLEAR;
 }
 
 void init()
@@ -223,13 +223,13 @@ void init()
 	sbi(TIMSK, TOIE0);
 
 	// timer 1 is used for software pwm
-  // set timer 1 prescale factor to 1
+	// set timer 1 prescale factor to 1
 	sbi(TCCR1, CS10);
 //	sbi(TCCR1, CS11);
 //	sbi(TCCR1, CS12);
 //	sbi(TCCR1, CS13);
-  // enable timer 1 overflow interrupt
-  sbi(TIMSK, TOIE1);
+	// enable timer 1 overflow interrupt
+	sbi(TIMSK, TOIE1);
 
 	// set a2d prescale factor to 128
 	// 16 MHz / 128 = 125 KHz, inside the desired 50-200 KHz range.
@@ -249,4 +249,9 @@ void init()
 #endif
 	// enable a2d conversions
 	sbi(ADCSRA, ADEN);
+
+	// turn off all LEDs
+	compbuff[0] = 255;
+	compbuff[1] = 255;
+	compbuff[2] = 255;
 }

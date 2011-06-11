@@ -71,14 +71,22 @@ void digitalWrite(uint8_t pin, uint8_t val)
 
 	if (port == NOT_A_PIN) return;
 
-	// If the pin that support PWM output, we need to turn it off
-	// before doing a digital write.
-	if (timer != NOT_ON_TIMER) turnOffPWM(timer);
+	if (pin == 3 || pin == 4 || pin == 1) {
+		if (val == HIGH) {
+			analogWrite(pin, 255);
+		} else {
+			analogWrite(pin, 0);
+		}
+	} else {
+		// If the pin that support PWM output, we need to turn it off
+		// before doing a digital write.
+		if (timer != NOT_ON_TIMER) turnOffPWM(timer);
 
-	out = portOutputRegister(port);
+		out = portOutputRegister(port);
 
-	if (val == LOW) *out &= ~bit;
-	else *out |= bit;
+		if (val == LOW) *out &= ~bit;
+		else *out |= bit;
+	}
 }
 
 int digitalRead(uint8_t pin)
@@ -89,10 +97,15 @@ int digitalRead(uint8_t pin)
 
 	if (port == NOT_A_PIN) return LOW;
 
-	// If the pin that support PWM output, we need to turn it off
-	// before getting a digital reading.
-	if (timer != NOT_ON_TIMER) turnOffPWM(timer);
+	if (pin == 3 || pin == 4 || pin == 1) {
+		return LOW;
+	} else {
+		// If the pin that support PWM output, we need to turn it off
+		// before getting a digital reading.
+		if (timer != NOT_ON_TIMER) turnOffPWM(timer);
 
-	if (*portInputRegister(port) & bit) return HIGH;
+		if (*portInputRegister(port) & bit) return HIGH;
+	}
+
 	return LOW;
 }
