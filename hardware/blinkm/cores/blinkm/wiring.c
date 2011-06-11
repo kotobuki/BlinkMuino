@@ -169,6 +169,40 @@ void delayMicroseconds(unsigned int us)
 	SREG = oldSREG;
 }
 
+// Software PWM for a RGB LED on a BlinkM module
+// reference: http://todbot.com/blog/2007/03/25/smart-led-prototypes/
+
+#define CH0_CLEAR (pinlevelB &= ~(1 << PB3)) // map CH0 to PB3 (red)
+#define CH1_CLEAR (pinlevelB &= ~(1 << PB4)) // map CH1 to PB4 (green)
+#define CH2_CLEAR (pinlevelB &= ~(1 << PB1)) // map CH2 to PB1 (blue)
+#define PORTB_MASK (1<< PB3)|(1<< PB4)|(1<< PB1) // set bits corresponding to pin usage above
+
+byte compare[CHMAX];
+volatile byte compbuff[CHMAX];
+
+SIGNAL(TIM1_OVF_vect)
+{
+  static byte pinlevelB = PORTB_MASK;
+  static byte softcount = 0xFF;
+
+  // common anode (+5V) means negative (~) logic
+  PORTB = ~pinlevelB;            // update outputs
+
+  if (++softcount == 0) {         // increment modulo 256 counter and update
+    // the compare values only when counter = 0.
+    compare[0] = compbuff[0];   // verbose code for speed
+    compare[1] = compbuff[1];
+    compare[2] = compbuff[2];
+
+    pinlevelB = PORTB_MASK;     // set all port pins high
+  }
+
+  // clear port pin on compare match (executed on next interrupt)
+  if (compare[0] == softcount) CH0_CLEAR;
+  if (compare[1] == softcount) CH1_CLEAR;
+  if (compare[2] == softcount) CH2_CLEAR;
+}
+
 void init()
 {
 	// this needs to be called before setup() or some functions won't
@@ -188,16 +222,14 @@ void init()
 	// enable timer 0 overflow interrupt
 	sbi(TIMSK, TOIE0);
 
-	// timers 1 are used for phase-correct hardware pwm
-	// this is better for motors as it ensures an even waveform
-	// note, however, that fast pwm mode can achieve a frequency of up
-	// 8 MHz (with a 16 MHz clock) at 50% duty cycle
-	// set timer 1 prescale factor to 64
-	sbi(TCCR1, CS11);
+	// timer 1 is used for software pwm
+  // set timer 1 prescale factor to 1
 	sbi(TCCR1, CS10);
-	sbi(TCCR1, PWM1A);
-	// put timer 1 in 8-bit phase correct pwm mode
-	// sbi(TCCR1, WGM10); non c'è nell attiny 45
+//	sbi(TCCR1, CS11);
+//	sbi(TCCR1, CS12);
+//	sbi(TCCR1, CS13);
+  // enable timer 1 overflow interrupt
+  sbi(TIMSK, TOIE1);
 
 	// set a2d prescale factor to 128
 	// 16 MHz / 128 = 125 KHz, inside the desired 50-200 KHz range.

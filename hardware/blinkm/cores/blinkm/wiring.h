@@ -137,6 +137,11 @@ void detachInterrupt(uint8_t);
 void setup(void);
 void loop(void);
 
+// for software PWM
+// maximum number of PWM channels
+#define CHMAX 3
+extern volatile byte compbuff[CHMAX];
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

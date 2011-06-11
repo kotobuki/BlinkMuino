@@ -97,28 +97,21 @@ void analogWrite(uint8_t pin, int val)
   // call for the analog output pins.
   pinMode(pin, OUTPUT);
 
-  //Yep, only 2 PMW, Saposoft
-  	
-if (digitalPinToTimer(pin) == TIMER0A) {
-    if (val == 0) {
-	  digitalWrite(pin, LOW);
+  // 3 software PWM are supported for red (3), green (4) and blue (1) pin
+  if (pin == 3) {
+    // red
+    compbuff[0] = val;
+  } else if (pin == 4) {
+    // green
+    compbuff[1] = val;    
+  } else if (pin == 1) {
+    // blue
+    compbuff[2] = val;
+  } else {
+    if (val < 128) {
+      digitalWrite(pin, LOW);
     } else {
-	  // connect pwm to pin on timer 0, channel A
-      sbi(TCCR0A, COM0A1);  
-	  // set pwm duty
-	  OCR0A = val;       // aka PB0
-    }
-  } else if (digitalPinToTimer(pin) == TIMER1) {
-    if (val == 0) {
-	  digitalWrite(pin, LOW);
-    } else {
-	  // connect pwm to pin on timer 0, channel B 
-      sbi(TCCR1, COM1A1); 
-	  // set pwm duty
-	  OCR1A = val;      // aka PB1
-    }
-  }  else if (val < 128)
-    digitalWrite(pin, LOW);
-  else
-    digitalWrite(pin, HIGH);
+      digitalWrite(pin, HIGH);
+    }    
+  }
 }
