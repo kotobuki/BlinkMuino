@@ -6,27 +6,20 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-LED	KEYWORD1
+RGBLED	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-getState	KEYWORD2
-on	KEYWORD2
-off	KEYWORD2
-toggle	KEYWORD2
-blink	KEYWORD2
-setValue	KEYWORD2
-fadeIn	KEYWORD2
-fadeOut	KEYWORD2
-fadeTo	KEYWORD2
+fadeToColor	KEYWORD2
+goToColor	KEYWORD2
+fadeToColorHSB	KEYWORD2
+goToColorHSB	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-SOURCE	LITERAL1
-SYNC	LITERAL1
-SQUARE	LITERAL1
-TRIANGLE	LITERAL1
+COMMON_ANODE	LITERAL1
+COMMON_CATHODE	LITERAL1

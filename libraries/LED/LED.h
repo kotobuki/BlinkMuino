@@ -4,7 +4,7 @@
 #ifndef LED_H
 #define LED_H
 
-#include "WProgram.h" 
+#include "WProgram.h"
 
 #define SOURCE 0
 #define SYNC 1
@@ -14,29 +14,47 @@
 #define BLINK 2
 #define FADE_IN 3
 #define FADE_OUT 4
+#define IN_TRANSITION 5
+
+#define SQUARE 0
+#define TRIANGLE 1
+
+typedef byte(*WAVE_GENERATOR)(float phase);
 
 class LED {
 public:
-	LED(uint8_t ledPin, byte driveMode = SOURCE);
-	bool getState();
+	LED();
+	LED(byte ledPin, byte driveMode = SOURCE);
+
+	static byte square(float phase);
+	static byte triangle(float phase);
+
+	void init(byte ledPin, byte driveMode = SOURCE);
+	byte getState();
 	void on();
 	void off();
 	void toggle();
-	void blink(unsigned int time, byte times = 0, bool synchronous = false);
+	void blink(unsigned int time, byte times = 0, byte wave = 0, bool synchronous = false);
 	void setValue(byte val);
+	byte getValue();
+	void fadeTo(byte val, unsigned int time, bool synchronous = false);
 	void fadeIn(unsigned int time, bool synchronous = false);
 	void fadeOut(unsigned int time, bool synchronous = false);
 	void update();
 
 private:
-	byte status;
-	uint8_t pin;
-	byte driveMode;
-	unsigned long start;
-	unsigned long cycle;
-	unsigned int times;
-};
+	byte _status;
+	byte _pin;
+	byte _driveMode;
+	byte _current;
+	byte _begin;
+	byte _end;
 
-extern LED DEBUG_LED;
+	unsigned long _start;
+	unsigned long _cycle;
+	unsigned int _times;
+
+	WAVE_GENERATOR _waveGenerator;
+};
 
 #endif

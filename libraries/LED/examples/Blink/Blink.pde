@@ -3,9 +3,9 @@
 LED led(3, SYNC);
 
 void setup() {
-  led.blink(1000);
+  led.blink(1000, 0, TRIANGLE);
 }
 
-void loop() { 
+void loop() {
   led.update();
 }

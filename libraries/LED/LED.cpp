@@ -1,119 +1,143 @@
 #include "LED.h"
 
-LED::LED(uint8_t ledPin, byte driveMode) {
-	this->pin = ledPin;
-	this->status = OFF;
-	this->driveMode = driveMode;
-	pinMode(this->pin, OUTPUT);
+LED::LED() {
 
-	if (driveMode == SOURCE) {
-		digitalWrite(pin, LOW);
-	} else if (driveMode == SYNC) {
-		digitalWrite(pin, HIGH);
-	}
 }
 
-bool LED::getState(){ return status; }
+LED::LED(byte ledPin, byte driveMode) {
+	init(ledPin, driveMode);
+}
+
+byte LED::square(float phase) {
+	return (phase <= 0.5f) ? 255 : 0;
+}
+
+byte LED::triangle(float phase) {
+	return (phase <= 0.5f) ? floor(511.0f * phase) : floor(511.0f * (1 - phase));
+}
+
+void LED::init(byte ledPin, byte driveMode) {
+	_pin = ledPin;
+	_driveMode = driveMode;
+	_waveGenerator = square;
+	pinMode(_pin, OUTPUT);
+	off();
+}
+
+byte LED::getState(){
+	return _status;
+}
 
 void LED::on(void) {
-	if (driveMode == SOURCE) {
-		digitalWrite(pin, HIGH);
-	} else if (driveMode == SYNC) {
-		digitalWrite(pin, LOW);
+	_current = 255;
+
+	if (_driveMode == SOURCE) {
+		digitalWrite(_pin, HIGH);
+	} else if (_driveMode == SYNC) {
+		digitalWrite(_pin, LOW);
 	}
-	this->status = ON;
+	_status = ON;
 }
 
 void LED::off(void) {
-	if (driveMode == SOURCE) {
-		digitalWrite(pin, LOW);
-	} else if (driveMode == SYNC) {
-		digitalWrite(pin, HIGH);
+	_current = 0;
+
+	if (_driveMode == SOURCE) {
+		digitalWrite(_pin, LOW);
+	} else if (_driveMode == SYNC) {
+		digitalWrite(_pin, HIGH);
 	}
-	this->status = OFF;
+	_status = OFF;
 }
 
 void LED::toggle(void) {
-	(status == ON) ? off() : on();
+	(_status == ON) ? off() : on();
 }
 
-void LED::blink(unsigned int time, byte times, bool synchronous) {
-	this->cycle = time;
-	this->times = times;
-	this->status = BLINK;
-	this->start = millis();
+void LED::blink(unsigned int time, byte times, byte wave, bool synchronous) {
+	_cycle = time;
+	_times = times;
+	_status = BLINK;
+	_start = millis();
+
+	if (wave == TRIANGLE) {
+		_waveGenerator = triangle;
+	} else {
+		// this is the default wave
+		_waveGenerator = square;
+	}
 }
 
 //assume PWM
 void LED::setValue(byte val) {
-	if (driveMode == SOURCE) {
-		analogWrite(pin, val);
-	} else if (driveMode == SYNC) {
-		analogWrite(pin, 255 - val);
+	_current = val;
+
+	if (_driveMode == SOURCE) {
+		analogWrite(_pin, val);
+	} else if (_driveMode == SYNC) {
+		analogWrite(_pin, 255 - val);
+	}
+}
+
+byte LED::getValue() {
+	return _current;
+}
+
+void LED::fadeTo(byte val, unsigned int time, bool synchronous) {
+	_cycle = time;
+	_times = 1;
+	_status = IN_TRANSITION;
+	_begin = _current;
+	_end = val;
+	_start = millis();
+
+	if (!synchronous) {
+		return;
+	}
+
+	while (_status == IN_TRANSITION) {
+		update();
 	}
 }
 
 //assume PWM
 void LED::fadeIn(unsigned int time, bool synchronous) {
-	this->cycle = time;
-	this->times = 1;
-	this->status = FADE_IN;
-	this->start = millis();
+	fadeTo(255, time, synchronous);
 }
 
 //assume PWM
 void LED::fadeOut(unsigned int time, bool synchronous) {
-	this->cycle = time;
-	this->times = 1;
-	this->status = FADE_OUT;
-	this->start = millis();
+	fadeTo(0, time, synchronous);
 }
 
 void LED::update() {
-	unsigned long now = millis();
-	unsigned long elapsedTime = now - start;
+	unsigned long elapsedTime = millis() - _start;
 
-	if (status == ON || status == OFF) {
+	if (_status == ON || _status == OFF) {
 		return;
 	}
 
-	if (times != 0 && (elapsedTime > (this->cycle * times))) {
-		switch (status) {
-			case BLINK:
-				off();
-				break;
-			case FADE_IN:
-				on();
-				break;
-			case FADE_OUT:
-				off();
-				break;
-			default:
-				break;
+	if (_times != 0 && (elapsedTime > (_cycle * _times))) {
+		if (_status == BLINK) {
+			off();
+		} else if (_status == IN_TRANSITION) {
+			if (_current == 0) {
+				_status = OFF;
+			} else {
+				_status = ON;
+			}
 		}
 	} else {
-		float phase = (float)(elapsedTime % this->cycle) / (float)this->cycle;
-		if (phase < 0.0f) {
-			phase = 0.0f;
-		} else if (phase > 1.0f) {
-			phase = 1.0f;
-		}
-		switch (status) {
-			case BLINK:
-				if (phase < 0.5f) {
-					setValue(255);
-				} else {
-					setValue(0);
-				}
-				break;
-			case FADE_IN:
-				setValue(round(255.0f * phase));
-				break;
-			case FADE_OUT:
-				setValue(255 - round(255.0f * phase));
-				break;
-			default:
-				break;
+		float phase = 0.0f;
+
+		if (_status == BLINK) {
+			phase = (float)(elapsedTime % _cycle) / (float)_cycle;
+			phase = constrain(phase, 0.0f, 1.0f);
+			setValue(_waveGenerator(phase));
+		} else if (_status == IN_TRANSITION) {
+			phase = (float)(elapsedTime) / (float)_cycle;
+			phase = constrain(phase, 0.0f, 1.0f);
+			setValue(round(_begin + (float)(_end - _begin) * phase));
 		}
 	}
 }
