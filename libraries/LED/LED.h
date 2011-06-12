@@ -4,17 +4,19 @@
 #ifndef LED_H
 #define LED_H
 
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
 #include "WProgram.h"
+#endif
 
 #define SOURCE 0
 #define SYNC 1
 
 #define OFF 0
 #define ON 1
-#define BLINK 2
-#define FADE_IN 3
-#define FADE_OUT 4
-#define IN_TRANSITION 5
+#define BLINKING 2
+#define IN_TRANSITION 3
 
 #define SQUARE 0
 #define TRIANGLE 1

@@ -57,7 +57,7 @@ void LED::toggle(void) {
 void LED::blink(unsigned int time, byte times, byte wave, bool synchronous) {
 	_cycle = time;
 	_times = times;
-	_status = BLINK;
+	_status = BLINKING;
 	_start = millis();
 
 	if (wave == TRIANGLE) {
@@ -118,7 +118,7 @@ void LED::update() {
 	}
 
 	if (_times != 0 && (elapsedTime > (_cycle * _times))) {
-		if (_status == BLINK) {
+		if (_status == BLINKING) {
 			off();
 		} else if (_status == IN_TRANSITION) {
 			if (_current == 0) {
@@ -130,7 +130,7 @@ void LED::update() {
 	} else {
 		float phase = 0.0f;
 
-		if (_status == BLINK) {
+		if (_status == BLINKING) {
 			phase = (float)(elapsedTime % _cycle) / (float)_cycle;
 			phase = constrain(phase, 0.0f, 1.0f);
 			setValue(_waveGenerator(phase));
