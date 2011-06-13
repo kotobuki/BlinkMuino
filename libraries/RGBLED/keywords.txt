@@ -14,8 +14,8 @@ RGBLED	KEYWORD1
 
 fadeToColor	KEYWORD2
 goToColor	KEYWORD2
-fadeToColorHSB	KEYWORD2
-goToColorHSB	KEYWORD2
+fadeToHSBColor	KEYWORD2
+goToHSBColor	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

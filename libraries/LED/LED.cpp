@@ -13,7 +13,7 @@ byte LED::square(float phase) {
 }
 
 byte LED::triangle(float phase) {
-	return (phase <= 0.5f) ? floor(511.0f * phase) : floor(511.0f * (1 - phase));
+	return (phase <= 0.5f) ? round(510.0f * phase) : round(510.0f * (1 - phase));
 }
 
 void LED::init(byte ledPin, byte driveMode) {

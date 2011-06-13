@@ -14,10 +14,13 @@ class RGBLED {
 public:
 	RGBLED(byte redPin, byte greenPin, byte bluePin, byte type = COMMON_ANODE);
 
+	static void getRGB(byte hue, byte saturation, byte brightness, byte* r, byte* g, byte* b);
+
 	void goToColor(byte red, byte green, byte blue);
 	void fadeToColor(byte red, byte green, byte blue, unsigned int time, bool synchronous = false);
-	// void goToHSBColor(byte hue, byte saturation, byte brightness);
-	// void fadeToHSBColor(byte hue, byte saturation, byte brightness, unsigned int time, bool synchronous = false);
+	void goToHSBColor(byte hue, byte saturation, byte brightness);
+	void fadeToHSBColor(byte hue, byte saturation, byte brightness, unsigned int time, bool synchronous = false);
+
 	void update();
 
 private:
