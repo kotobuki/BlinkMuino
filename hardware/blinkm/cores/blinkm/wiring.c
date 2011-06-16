@@ -81,10 +81,10 @@ unsigned long millis()
 unsigned long micros() {
 	unsigned long m, t;
 	uint8_t oldSREG = SREG;
-	
-	cli();	
+
+	cli();
 	t = TCNT0;
-  
+
 #ifdef TIFR0
 	if ((TIFR0 & _BV(TOV0)) && (t == 0))
 		t = 256;
@@ -95,19 +95,19 @@ unsigned long micros() {
 
 	m = timer0_overflow_count;
 	SREG = oldSREG;
-	
+
 	return ((m << 8) + t) * (64 / clockCyclesPerMicrosecond());
 }
 
 void delay(unsigned long ms)
 {
 	unsigned long start = millis();
-	
+
 	while (millis() - start <= ms)
 		;
 }
 
-/* Delay for the given number of microseconds.  Assumes a 8 or 16 MHz clock. 
+/* Delay for the given number of microseconds.  Assumes a 8 or 16 MHz clock.
  * Disables interrupts, which will disrupt the millis() function if used
  * too frequently. */
 void delayMicroseconds(unsigned int us)
@@ -148,7 +148,7 @@ void delayMicroseconds(unsigned int us)
 	// per iteration, so execute it twice for each microsecond of
 	// delay requested.
 	us <<= 1;
-    
+
 	// partially compensate for the time taken by the preceeding commands.
 	// we can't subtract any more than this or we'd overflow w/ small delays.
 	us--;
@@ -175,32 +175,33 @@ void delayMicroseconds(unsigned int us)
 #define CH0_CLEAR (pinlevelB &= ~(1 << PB3)) // map CH0 to PB3 (red)
 #define CH1_CLEAR (pinlevelB &= ~(1 << PB4)) // map CH1 to PB4 (green)
 #define CH2_CLEAR (pinlevelB &= ~(1 << PB1)) // map CH2 to PB1 (blue)
-#define PORTB_MASK (1<< PB3)|(1<< PB4)|(1<< PB1) // set bits corresponding to pin usage above
+#define PORTB_PWM_PIN_MASK (1<< PB3)|(1<< PB4)|(1<< PB1) // set bits corresponding to pin usage above
+#define PORTB_NON_PWM_PIN_MASK 0b11100101 // set bits corresponding to pin usage above
 
 byte compare[CHMAX];
 volatile byte compbuff[CHMAX];
 
 SIGNAL(TIM1_OVF_vect)
 {
-	static byte pinlevelB = PORTB_MASK;
-	static byte softcount = 0xFF;
+  static byte pinlevelB = PORTB_PWM_PIN_MASK;
+  static byte softcount = 0xFF;
 
-	// common anode (+5V) means negative (~) logic
-	PORTB = ~pinlevelB;						 // update outputs
+  // common cathode (GND) means positive logic
+  PORTB = (PORTB & PORTB_NON_PWM_PIN_MASK) + pinlevelB;            // update outputs
 
-	if (++softcount == 0) {					// increment modulo 256 counter and update
-		// the compare values only when counter = 0.
-		compare[0] = compbuff[0];		// verbose code for speed
-		compare[1] = compbuff[1];
-		compare[2] = compbuff[2];
+  if (++softcount == 0) {					// increment modulo 256 counter and update
+    // the compare values only when counter = 0.
+    compare[0] = compbuff[0];		// verbose code for speed
+    compare[1] = compbuff[1];
+    compare[2] = compbuff[2];
 
-		pinlevelB = PORTB_MASK;			// set all port pins high
-	}
+    pinlevelB = PORTB_PWM_PIN_MASK;			// set all port pins high
+  }
 
-	// clear port pin on compare match (executed on next interrupt)
-	if (compare[0] < 255 && compare[0] == softcount) CH0_CLEAR;
-	if (compare[1] < 255 && compare[1] == softcount) CH1_CLEAR;
-	if (compare[2] < 255 && compare[2] == softcount) CH2_CLEAR;
+  // clear port pin on compare match (executed on next interrupt)
+  if (compare[0] < 255 && compare[0] == softcount) CH0_CLEAR;
+  if (compare[1] < 255 && compare[1] == softcount) CH1_CLEAR;
+  if (compare[2] < 255 && compare[2] == softcount) CH2_CLEAR;
 }
 
 void init()
@@ -208,7 +209,7 @@ void init()
 	// this needs to be called before setup() or some functions won't
 	// work there
 	sei();
-	
+
 /* dumpt everything, and only added the 2 timers the attiny has */
 	// on the ATmega168, timer 0 is also used for fast hardware pwm
 	// (using phase-correct PWM would mean that timer 0 overflowed half as often
@@ -249,9 +250,4 @@ void init()
 #endif
 	// enable a2d conversions
 	sbi(ADCSRA, ADEN);
-
-	// turn off all LEDs
-	compbuff[0] = 255;
-	compbuff[1] = 255;
-	compbuff[2] = 255;
 }

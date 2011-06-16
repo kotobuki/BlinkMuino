@@ -2,7 +2,7 @@
 #include <RGBLED.h>
 
 // The pins of BlinkM
-RGBLED rgbLED(3, 4, 1, COMMON_ANODE);
+RGBLED rgbLED(3, 4, 1, COMMON_CATHODE);
 
 int hue = 0;
 

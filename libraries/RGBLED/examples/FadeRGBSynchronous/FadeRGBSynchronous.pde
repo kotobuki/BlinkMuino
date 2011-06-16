@@ -1,7 +1,7 @@
 #include <LED.h>
 #include <RGBLED.h>
 
-RGBLED rgbLED(3, 4, 1, COMMON_ANODE);
+RGBLED rgbLED(3, 4, 1, COMMON_CATHODE);
 
 void setup() {
 
