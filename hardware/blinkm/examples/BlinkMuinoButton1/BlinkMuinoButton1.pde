@@ -14,6 +14,8 @@ void setup() {
 }
 
 void loop() {
+  button.update();
+
   if (button.isPressed()) {
     led.on();
   } 
