@@ -12,10 +12,12 @@ Button	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+update	KEYWORD2
 isPressed	KEYWORD2
 wasPressed	KEYWORD2
 stateChanged	KEYWORD2
 uniquePress	KEYWORD2
+uniqueRelease	KEYWORD2
 pullup	KEYWORD2
 pulldown	KEYWORD2
 
@@ -23,5 +25,6 @@ pulldown	KEYWORD2
 # Constants (LITERAL1)
 #######################################
 
-PULLUP	LITERAL1
-PULLDOWN	LITERAL1
+BUTTON_PULLUP HIGH	LITERAL1
+BUTTON_PULLUP_INTERNAL	LITERAL1
+BUTTON_PULLDOWN LOW	LITERAL1

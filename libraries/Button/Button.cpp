@@ -1,7 +1,7 @@
 /* $Id$
 ||
 || @file 		       Button.cpp
-|| @author 		     Alexander Brevig              <alexanderbrevig@gmail.com>        
+|| @author 		     Alexander Brevig              <alexanderbrevig@gmail.com>
 || @url            http://alexanderbrevig.com
 ||
 || @description
@@ -13,7 +13,6 @@
 ||
 */
 
-#include <Arduino.h>
 #include "Button.h"
 
 #define CURRENT 0
@@ -24,23 +23,23 @@
 || @constructor
 || | Set the initial state of this button
 || #
-|| 
+||
 || @parameter buttonPin  sets the pin that this switch is connected to
 || @parameter buttonMode indicates BUTTON_PULLUP or BUTTON_PULLDOWN resistor
 */
 Button::Button(uint8_t buttonPin, uint8_t buttonMode){
 	pin=buttonPin;
   pinMode(pin,INPUT);
-  
+
 	buttonMode==BUTTON_PULLDOWN ? pulldown() : pullup(buttonMode);
   state = 0;
   bitWrite(state,CURRENT,!mode);
-  
+
   cb_onPress = 0;
   cb_onRelease = 0;
   cb_onClick = 0;
   cb_onHold = 0;
-  
+
   numberOfPresses = 0;
   triggeredHoldEvent = true;
 }
@@ -54,7 +53,7 @@ Button::Button(uint8_t buttonPin, uint8_t buttonMode){
 void Button::pullup(uint8_t buttonMode)
 {
 	mode=BUTTON_PULLUP;
-  if (buttonMode == BUTTON_PULLUP_INTERNAL) 
+  if (buttonMode == BUTTON_PULLUP_INTERNAL)
   {
 	  digitalWrite(pin,HIGH);
   }
@@ -72,39 +71,37 @@ void Button::pulldown(void)
 
 /*
 || @description
-|| | Return the bitRead(state,CURRENT) of the switch
+|| | Update the state the switch
 || #
-|| 
-|| @return true if button is pressed
 */
-bool Button::isPressed(void)
-{  
+void Button::update(void)
+{
   //save the previous value
   bitWrite(state,PREVIOUS,bitRead(state,CURRENT));
-  
+
   //get the current status of the pin
   if (digitalRead(pin) == mode)
   {
     //currently the button is not pressed
     bitWrite(state,CURRENT,false);
-  } 
-  else 
+  }
+  else
   {
     //currently the button is pressed
     bitWrite(state,CURRENT,true);
   }
-  
+
   //handle state changes
   if (bitRead(state,CURRENT) != bitRead(state,PREVIOUS))
   {
     //the state changed to PRESSED
-    if (bitRead(state,CURRENT) == true) 
+    if (bitRead(state,CURRENT) == true)
     {
       numberOfPresses++;
       if (cb_onPress) { cb_onPress(*this); }   //fire the onPress event
       pressedStartTime = millis();             //start timing
       triggeredHoldEvent = false;
-    } 
+    }
     else //the state changed to RELEASED
     {
       if (cb_onRelease) { cb_onRelease(*this); } //fire the onRelease event
@@ -120,18 +117,29 @@ bool Button::isPressed(void)
     //note that the state did not change
     bitWrite(state,CHANGED,false);
     //should we trigger a onHold event?
-    if (pressedStartTime!=-1 && !triggeredHoldEvent) 
+    if (pressedStartTime!=-1 && !triggeredHoldEvent)
     {
-      if (millis()-pressedStartTime > holdEventThreshold) 
-      { 
-        if (cb_onHold) 
-        { 
-          cb_onHold(*this); 
+      if (millis()-pressedStartTime > holdEventThreshold)
+      {
+        if (cb_onHold)
+        {
+          cb_onHold(*this);
           triggeredHoldEvent = true;
         }
       }
     }
   }
+}
+
+/*
+|| @description
+|| | Return the bitRead(state,CURRENT) of the switch
+|| #
+||
+|| @return true if button is pressed
+*/
+bool Button::isPressed(void)
+{
 	return bitRead(state,CURRENT);
 }
 
@@ -142,7 +150,7 @@ bool Button::isPressed(void)
 */
 bool Button::wasPressed(void)
 {
-  return bitRead(state,CURRENT);
+  return bitRead(state,PREVIOUS);
 }
 
 /*
@@ -167,19 +175,29 @@ bool Button::uniquePress(void)
 
 /*
 || @description
+|| | Return true if the button is released, and was not released before
+|| #
+*/
+bool Button::uniqueRelease(void)
+{
+  return (!isPressed() && stateChanged());
+}
+
+/*
+|| @description
 || | onHold polling model
 || | Check to see if the button has been pressed for time ms
 || | This will clear the counter for next iteration and thus return true once
 || #
 */
-bool Button::held(unsigned int time /*=0*/) 
+bool Button::held(unsigned int time /*=0*/)
 {
   unsigned int threshold = time ? time : holdEventThreshold; //use holdEventThreshold if time == 0
 	//should we trigger a onHold event?
-  if (pressedStartTime!=-1 && !triggeredHoldEvent) 
+  if (pressedStartTime!=-1 && !triggeredHoldEvent)
   {
-    if (millis()-pressedStartTime > threshold) 
-    { 
+    if (millis()-pressedStartTime > threshold)
+    {
       triggeredHoldEvent = true;
       return true;
     }
@@ -193,9 +211,9 @@ bool Button::held(unsigned int time /*=0*/)
 || | Check to see if the button has been pressed for time ms
 || #
 */
-bool Button::heldFor(unsigned int time) 
+bool Button::heldFor(unsigned int time)
 {
-	if (isPressed()) 
+	if (isPressed())
   {
 		if (millis()-pressedStartTime > time) { return true; }
 	}
@@ -207,9 +225,9 @@ bool Button::heldFor(unsigned int time)
 || | Set the hold event time threshold
 || #
 */
-void Button::setHoldThreshold(unsigned int holdTime) 
-{ 
-  holdEventThreshold = holdTime; 
+void Button::setHoldThreshold(unsigned int holdTime)
+{
+  holdEventThreshold = holdTime;
 }
 
 /*
@@ -274,12 +292,12 @@ unsigned int Button::holdTime() const { if (pressedStartTime!=-1) { return milli
 || @description
 || | Compare a button object against this
 || #
-|| 
+||
 || @parameter  rhs the Button to compare against this Button
-|| 
+||
 || @return true if they are the same
 */
-bool Button::operator==(Button &rhs) 
+bool Button::operator==(Button &rhs)
 {
   return (this==&rhs);
 }

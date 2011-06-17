@@ -16,7 +16,11 @@
 #ifndef Button_h
 #define Button_h
 
-#include <inttypes.h>
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#endif
 
 #define BUTTON_PULLUP HIGH
 #define BUTTON_PULLUP_INTERNAL 2
@@ -28,15 +32,18 @@ typedef void (*buttonEventHandler)(Button&);
 class Button {
   public:
   
-    Button(uint8_t buttonPin, uint8_t buttonMode=BUTTON_PULLUP_INTERNAL);
+    Button(uint8_t buttonPin, uint8_t buttonMode=BUTTON_PULLDOWN);
     
     void pullup(uint8_t buttonMode);
     void pulldown();
     
+    void update();
+
     bool isPressed();
     bool wasPressed();
     bool stateChanged();
     bool uniquePress();
+    bool uniqueRelease();
     
     void setHoldThreshold(unsigned int holdTime);
     bool held(unsigned int time=0);
