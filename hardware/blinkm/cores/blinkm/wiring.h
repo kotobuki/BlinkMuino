@@ -142,6 +142,8 @@ void loop(void);
 #define CHMAX 3
 extern volatile byte compbuff[CHMAX];
 
+#define __BLINKMUINO__
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
