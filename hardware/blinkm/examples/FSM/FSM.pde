@@ -17,9 +17,9 @@
 
 // それぞれの状態を定義
 // 引数はその状態に入ったとき、アップデートのとき、抜けたときに実行する関数
-State WAITING = State(enterWaiting, NO_UPDATE, NO_EXIT);
-State PLAYING = State(enterPlaying, NO_UPDATE, NO_EXIT);
-State PAUSING = State(enterPausing, NO_UPDATE, NO_EXIT);
+State WAITING = State(enterWaiting, NO_UPDATE, NO_EXIT, "Waiting");
+State PLAYING = State(enterPlaying, NO_UPDATE, NO_EXIT, "Playing");
+State PAUSING = State(enterPausing, NO_UPDATE, NO_EXIT, "Pausing");
 
 // Finite State Machine、初期状態はWAITING
 FSM stateMachine = FSM(WAITING);
@@ -30,6 +30,9 @@ Button stopButton = Button(sclPin);
 LED playIndicator = LED(grnPin);
 
 void setup() {
+  // シリアル出力が利用できる場合にはデバッグ出力を開始
+  BEGIN_DEBUG_OUT
+
   // それぞれのボタンにイベントハンドラをセット
   playButton.pressHandler(playButtonPressed);
   stopButton.pressHandler(stopButtonPressed);
@@ -79,17 +82,17 @@ void stopButtonPressed(Button& b) {
 // 他の状態から待機中に移行
 void enterWaiting() {
   // 待機中に移行したらLEDを消灯
-  playLed.off();
+  playIndicator.off();
 }
 
 // 他の状態から再生中に移行
 void enterPlaying() {
   // LEDを点灯
-  playLed.on();
+  playIndicator.on();
 }
 
 // 他の状態から一時停止中に移行
 void enterPausing() {
   // LEDを点滅
-  playLed.blink(500);
+  playIndicator.blink(500);
 }

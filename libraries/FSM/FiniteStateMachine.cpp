@@ -25,11 +25,12 @@
 ||
 || @parameter updateFunction the function to call when this state updates
 */
-State::State(void (*updateFunction)())
+State::State(void (*updateFunction)(), const char* name)
 {
   userEnter = 0;
   userUpdate = updateFunction;
   userExit = 0;
+  _name = name;
 }
 
 /*
@@ -41,11 +42,12 @@ State::State(void (*updateFunction)())
 || @parameter updateFunction the function to call when this state updates
 || @parameter exitFunction   the function to call when this state exits
 */
-State::State(void (*enterFunction)(), void (*updateFunction)(), void (*exitFunction)())
+State::State(void (*enterFunction)(), void (*updateFunction)(), void (*exitFunction)(), const char* name)
 {
   userEnter = enterFunction;
   userUpdate = updateFunction;
   userExit = exitFunction;
+  _name = name;
 }
 
 /*
@@ -119,6 +121,9 @@ FiniteStateMachine& FiniteStateMachine::update()
   {
     currentState->enter();
     needToTriggerEnter = false;
+#if defined(UBRR0H)
+    Serial.println(currentState->name());
+#endif
   }
   else
   {
@@ -157,6 +162,11 @@ FiniteStateMachine& FiniteStateMachine::immediateTransitionTo(State& state)
   currentState->exit();
   currentState = nextState = &state;
   currentState->enter();
+#if defined(UBRR0H)
+  if (currentState->name() != NULL) {
+    Serial.println(currentState->name());
+  }
+#endif
   stateChangeTime = millis();
   return *this;
 }

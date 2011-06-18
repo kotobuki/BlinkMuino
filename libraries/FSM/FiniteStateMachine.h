@@ -34,8 +34,8 @@
 class State
 {
   public:
-    State(void (*updateFunction)());
-    State(void (*enterFunction)(), void (*updateFunction)(), void (*exitFunction)());
+    State(void (*updateFunction)(), const char* name = NULL);
+    State(void (*enterFunction)(), void (*updateFunction)(), void (*exitFunction)(), const char* name = NULL);
     //State( byte newId, void (*enterFunction)(), void (*updateFunction)(), void (*exitFunction)() );
 
     //void getId();
@@ -43,11 +43,15 @@ class State
     void update();
     void exit();
 
+    inline const char* name() { return _name; }
+
   private:
     //byte id;
     void (*userEnter)();
     void (*userUpdate)();
     void (*userExit)();
+
+    const char* _name;
 };
 
 //define the finite state machine functionality
