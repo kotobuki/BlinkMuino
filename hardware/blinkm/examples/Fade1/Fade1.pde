@@ -1,13 +1,4 @@
-/*
- * BlinkMuinoFadeAnalogWrite -- Fade up and down a BlinkM's red LED.
- *
- * Based on the standard "Blink" Arduino example.
- * 
- * Created by Shigeru Kobayashi
- * https://github.com/kotobuki/BlinkMuino/
- */
-
-const int redPin = 3;
+#include "Pins.h"
 
 int brightness = 0;    // how bright the LED is
 int fadeAmount = 5;    // how many points to fade the LED by

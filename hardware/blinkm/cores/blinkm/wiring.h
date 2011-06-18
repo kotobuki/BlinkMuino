@@ -66,7 +66,7 @@ extern "C"{
 #define FALLING 2
 #define RISING 3
 // end interrupts
-	
+
 #define INTERNAL 3
 #define DEFAULT 1
 #define EXTERNAL 0
@@ -141,8 +141,6 @@ void loop(void);
 // maximum number of PWM channels
 #define CHMAX 3
 extern volatile byte compbuff[CHMAX];
-
-#define __BLINKMUINO__
 
 #ifdef __cplusplus
 } // extern "C"
