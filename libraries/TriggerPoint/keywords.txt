@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For TriggerPoint
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TriggerPoint	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+update	KEYWORD2
+value	KEYWORD2
+state	KEYWORD2
+lastState	KEYWORD2
+risingEdgeHandler	KEYWORD2
+fallingEdgeHandler	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
