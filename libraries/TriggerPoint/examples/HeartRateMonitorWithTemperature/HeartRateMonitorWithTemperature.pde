@@ -7,6 +7,9 @@
  Created 23 July 2011
  by Shigeru Kobayashi
 
+ Modified 24 July 2011
+ by Shigeru Kobayashi
+
  This example code is in the public domain.
  */
 
@@ -45,14 +48,9 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
 
-  // wait for 1 second and update the maximum value
-  int maximum = 0;
-  while (millis() < 1000) {
-    maximum = max(analogRead(heartRateSensorPin), maximum);
-  }
-
-  int threshold = int((float)maximum * 0.8);
-  int hysteresis = int((float)maximum * 0.05);
+  // define the threshold and hysteresis
+  int threshold = 1023 / 4;
+  int hysteresis = int((float)threshold * 0.05);
 
   triggerPoint.init(threshold, hysteresis);
   triggerPoint.risingEdgeHandler(onPulse);
