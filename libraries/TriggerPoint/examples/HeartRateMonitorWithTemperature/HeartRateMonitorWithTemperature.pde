@@ -76,6 +76,17 @@ void loop() {
   // update the TriggerPoint object
   triggerPoint.update();
 
+  // if any command from the PC is availbale, handle the commands
+  if (Serial.available() > 0) {
+    int incomingByte = Serial.read();
+    if (incomingByte == 1){
+      digitalWrite(13, HIGH);
+    }
+    else{
+      digitalWrite(13, LOW);
+    }
+  }
+
   unsigned long now = millis();
 
   // if it's not time to report, skip followings
@@ -97,17 +108,6 @@ void loop() {
 
   Serial.print("BPM:");
   Serial.println(bpm);   
-
-  // if any command from the PC is availbale, handle the commands
-  if (Serial.available() > 0) {
-    int incomingByte = Serial.read();
-    if (incomingByte == 1){
-      digitalWrite(13, HIGH);
-    }
-    else{
-      digitalWrite(13, LOW);
-    }
-  }
 }
 
 void onPulse() {
