@@ -10,21 +10,25 @@
 #include "WProgram.h"
 #endif
 
-#define SOURCE 0
-#define SYNC 1
+class LED;
 
-#define OFF 0
-#define ON 1
-#define BLINKING 2
-#define IN_TRANSITION 3
-
-#define SQUARE 0
-#define TRIANGLE 1
-
-typedef byte(*WAVE_GENERATOR)(float phase);
+extern "C" {
+	typedef byte(*WAVE_GENERATOR)(float phase);
+}
 
 class LED {
 public:
+	enum {
+		SOURCE,
+		SYNC,
+		OFF,
+		ON,
+		BLINKING,
+		IN_TRANSITION,
+		SQUARE,
+		TRIANGLE
+	};
+
 	LED();
 	LED(byte ledPin, byte driveMode = SOURCE);
 
