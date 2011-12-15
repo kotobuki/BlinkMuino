@@ -1,9 +1,9 @@
 #include <LED.h>
 
-LED led(3, SYNC);
+LED led(9, LED::SOURCE);
 
 void setup() {
-  led.blink(1000, 0, TRIANGLE);
+  led.blink(1000, 0, LED::TRIANGLE);
 }
 
 void loop() {
